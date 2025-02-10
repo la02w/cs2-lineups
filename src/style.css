@@ -1,1 +1,13 @@
 @import 'tailwindcss';
+
+@layer base {
+  .myscrollbar::-webkit-scrollbar {
+    width: 16px;
+  }
+
+  .myscrollbar::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-gray-400;
+    border: 6px solid transparent;
+    background-clip: padding-box;
+  }
+}
