@@ -18,6 +18,7 @@
           :style="{ left: item.end.x, top: item.end.y }"
           class="absolute w-5 h-5 bg-gray-400 rounded-full z-10 translate-[-50%]"
           @click="showLineups(item.name)"
+          @click.stop
         />
         <div
           v-for="(item, index) in map[selectedMap]"
@@ -30,6 +31,7 @@
               :style="{ left: i.marker.x, top: i.marker.y }"
               class="absolute w-3 h-3 translate-[-50%] z-10 bg-yellow-300 rounded-full group"
               @click="TutorialData = i"
+              @click.stop
             >
               <div
                 class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-sm p-2 rounded-lg w-auto text-nowrap"
@@ -58,11 +60,13 @@
         ></div>
         <div class="absolute right-2 top-2 rounded-lg text-black bg-white">
           <select v-model="selectedMap" @click.stop class="focus:outline-none">
-            <option value="mirage">mirage</option>
-            <option value="dust2">dust2</option>
-            <option value="inferno">inferno</option>
-            <option value="nuke">nuke</option>
-            <option value="train">train</option>
+            <option value="ancient">远古遗迹</option>
+            <option value="anubis">阿努比斯</option>
+            <option value="dust2">炙热沙城2</option>
+            <option value="inferno">炼狱小镇</option>
+            <option value="mirage">荒漠迷城</option>
+            <option value="nuke">核子危机</option>
+            <option value="train">列车停放站</option>
           </select>
         </div>
       </div>
@@ -112,58 +116,17 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import Tutorial from './components/Tutorial.vue'
+import type { Start } from './maps/types'
+import { map } from './maps/types'
 
 const smokeICON =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFEAAABRCAYAAACqj0o2AAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAeGVYSWZNTQAqAAAACAAEARoABQAAAAEAAAA+ARsABQAAAAEAAABGASgAAwAAAAEAAgAAh2kABAAAAAEAAABOAAAAAAAAASAAAAABAAABIAAAAAEAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAUaADAAQAAAABAAAAUQAAAAAel8ReAAAACXBIWXMAACxLAAAsSwGlPZapAAAEqklEQVR4Ae2cSYxMQRyHjW3EvgcziNjFHjNImKPEQTg4SAiJi7g7u+LgKLEcRCIktpMDiTiJRBCDwQhGxhiJNZZBjGV8v8nraFM9na7X3a/edP7/5Mt7qquqq76uevW20a+fhRkwA2bADJgBM2AGzIAZMANmwAyYATNQUQa6urrq4TzUpqVjA9PSEKTU0JZ87fnG551wENbAVTgEFjKAwAZ4Dx15eM1nNyAT19kZZAYjA8g4lTHjse0kr0akBSIWw1cPedlZj6TBYP8UNKKDNuyBDzHasgGjk2OUq7wiiKiGtuwh5rG/O7SRNIxEORgCVTFlbEF4vlU9ZrWFF0uLxMJb7OZcTdJyNzm5lLRI/EmXu2J2W6c5O2KWLUmx4BKZikPpyULQlI4bm6hnQtzCxZaLexyK/b10dhyF18EiWAZzYDyMhGJiV1VV1dFiKugzZZGo695yxDUqDbLAhJjOC8r0i9dTr0Z24hFC4q8S9/I09alOLTDbSlx3QdWFkFhQwzwynSDvxSj/Zqa0jq+JRiVI/I6xvfAVpsBGSDQqQWI1q/J9rB2OzCU+pUNI/ENn2+Fj1Ok4G52Yq44vkOnDfvZbQaMx0QhxSiAB26ENloDOF7WyzoKpUA094x0Jr+Au3IQH0b7ucnefpDMa33E8VLrOOxONEBLVwU46/YStOKcEBIxiI5HzYRVMgiaQtGZopcx/KztlNKqzI/GLB315KInOdTKCPtGe2xEn1bgCIoi0nu0KIXEAjdjHKLrM9iFoUWhHolbZXoP8EqZLQ01XjdYVsB7OQNAIIVEdXhuh/Q7QDVkd7+6BRqPE6umeFgkdNyVsKcwD3WgYDJn4ndkJtQ0lMbu/w/mHRpbYEn2ghUTTuxZyLTRRtnRs0iAxl4nxJIo+EZlzrD7R2LQ2stIkOqt+EuIrTWISzpzvMImOEv8Ek+jvzClhEh0l/gkm0d+ZU8IkOkr8E0yivzOnhEl0lPgnmER/Z04Jk+go8U8wif7OnBIm0VHin2AS/Z05JUyio8Q/IcRNWd3OvwB6L1EvN+nutc+PqTcdWkCPE/TIIEQf+Np/EaoB+3kwdZPnKhNpyjSoAwlZCHpMMBr0YEpv0L6ARxE32DbCG8p/ofwx9vUiU9AIJbG744h4Q+/FLVlAitLHgmRKsJ4GPiffZ7a5wmcE5ypfkrQQEjXCahA2GDmd2b3g3xp5ryOyP3L2KT+GRI3YIHezsxsUQqKeOx+HJkQ8ZqtRqCnagkS9X+ME+XT81LSfCXo7Qn8tMBtmwREIGiEkauQMg5UR2yMD7ch6xr4WDInVNJ8LkrYAZsAIyBeqO/EpHkJibxJq+EA09JYhXzo/gPqilV7v7SQaif9qZezddOrW2xJXyvgdOauuJIl6T+cUXMrZ0zImpmk6F9VNFqU7VLC1qEpiFg4xEnWKU8oodX3ebQsh8Yd3K/MX+O9cM3/WCvmUVXQJ6K+q9N8PFBN3KLwTUv/WWNl+OjpfBwegGX5AIfGWTGdBf+Osc81URPDjCTJ0NbI4QifXujLJCNJU1WXgU9BNiEYWkJdsLcyAGTADZsAMmAEzYAbMgBkwA2bADJiBPmTgLyNSrUGA2OBuAAAAAElFTkSuQmCC'
-
-type Start = {
-  marker: { x: string; y: string }
-  desc: string
-  image: string[]
-}
-
-type Item = {
-  name: string
-  end: { x: string; y: string }
-  start: Start[]
-}
 
 const selectedMap = ref('mirage')
 const TutorialData = ref<Start | null>(null)
 const newMarkerX = ref<string | null>(null)
 const newMarkerY = ref<string | null>(null)
 const newMarkerDesc = ref<string | null>(null)
-const mirage: Item[] = [
-  {
-    name: 'vip',
-    end: { x: '40%', y: '46%' },
-    start: [
-      {
-        marker: { x: '88%', y: '36%' },
-        desc: '匪家VIP快烟',
-        image: [
-          'https://dummyimage.com/300x150',
-          'https://dummyimage.com/300x150',
-          'https://dummyimage.com/300x150',
-          'https://dummyimage.com/300x150',
-          'https://dummyimage.com/300x150',
-          'https://dummyimage.com/300x150',
-          'https://dummyimage.com/300x150',
-          'https://dummyimage.com/300x150',
-          'https://dummyimage.com/300x150',
-        ],
-      },
-      {
-        marker: { x: '54.00%', y: '48.50%' },
-        desc: '中路续VIP烟',
-        image: ['https://dummyimage.com/300x150'],
-      },
-    ],
-  },
-]
-const map: { [key: string]: Item[] } = {
-  mirage: mirage,
-}
 
 const getCoordinate = (event: MouseEvent) => {
   const container = event.currentTarget as HTMLElement
