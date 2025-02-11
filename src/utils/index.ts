@@ -1,7 +1,7 @@
 export function getDarkMode(): boolean {
-  const lang = localStorage.getItem('dark')
-  if (lang) {
-    return Boolean(lang)
+  const dark = localStorage.getItem('dark')
+  if (dark == 'true') {
+    return Boolean(dark)
   }
   localStorage.setItem('lang', 'false')
   return false
