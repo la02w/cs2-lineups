@@ -5,9 +5,7 @@
         class="border-2 border-gray-700 bg-gray-700 h-full bg-contain bg-no-repeat rounded-lg overflow-hidden relative"
         :style="{
           'background-image':
-            'url(\'https://github.com/MathOak/cs2-hud-map/blob/master/src/maps/de_' +
-            `${selectedMap}` +
-            '/radar.png?raw=true\')',
+            'url(\'/src/assets/maps/' + `${selectedMap}` + '.png\')',
         }"
         @click="getCoordinate"
       >
@@ -56,7 +54,8 @@
             left: newMarkerX ? newMarkerX : '',
             top: newMarkerY ? newMarkerY : '',
           }"
-          class="absolute w-2 h-2 translate-[-50%] z-10 bg-red-300 rounded-full group"
+          id="newMarker"
+          class="absolute hidden w-2 h-2 translate-[-50%] z-10 bg-red-300 rounded-full group"
         ></div>
         <div class="absolute right-2 top-2 rounded-lg text-black bg-white">
           <select v-model="selectedMap" @click.stop class="focus:outline-none">
@@ -76,26 +75,35 @@
       class="w-full min-w-200 h-screen p-3 bg-gray-200 rounded-lg overflow-auto myscrollbar"
     >
       <div class="flex gap-5">
-        <input
-          v-model="newMarkerX"
-          class="bg-gray-400 rounded-lg text-center"
-          placeholder="x"
-          type="text"
-        />
-        <input
-          v-model="newMarkerY"
-          class="bg-gray-400 rounded-lg text-center"
-          placeholder="y"
-          type="text"
-        />
-        <input
-          v-model="newMarkerDesc"
-          class="bg-gray-400 rounded-lg text-center"
-          placeholder="此处添加描述"
-          type="text"
-        />
+        <button
+          type="button"
+          @click="showInput"
+          class="bg-blue-200 p-1 rounded-lg hover:bg-blue-300 active:bg-blue-400 hover:scale-110 active:scale-100"
+        >
+          添加新道具
+        </button>
+        <div id="markInput" class="space-x-3 hidden">
+          <input
+            v-model="newMarkerX"
+            class="bg-gray-400 rounded-lg text-center"
+            placeholder="x"
+            type="text"
+          />
+          <input
+            v-model="newMarkerY"
+            class="bg-gray-400 rounded-lg text-center"
+            placeholder="y"
+            type="text"
+          />
+          <input
+            v-model="newMarkerDesc"
+            class="bg-gray-400 rounded-lg text-center"
+            placeholder="此处添加描述"
+            type="text"
+          />
+        </div>
       </div>
-      <div>
+      <div id="newMarkerData" class="hidden">
         {{
           `
 {
@@ -104,6 +112,11 @@
   image: [''],
 },
           `
+        }}
+      </div>
+      <div>
+        {{
+          `https://github.com/MathOak/cs2-hud-map/blob/master/src/maps/de_${selectedMap}/radar.png?raw=true`
         }}
       </div>
       <Tutorial
@@ -128,18 +141,31 @@ const newMarkerX = ref<string | null>(null)
 const newMarkerY = ref<string | null>(null)
 const newMarkerDesc = ref<string | null>(null)
 
+const showInput = () => {
+  const markInput = document.getElementById('markInput') as HTMLElement
+  const newMarker = document.getElementById('newMarker') as HTMLElement
+  const newMarkerData = document.getElementById('newMarkerData') as HTMLElement
+  markInput.classList.toggle('hidden')
+  newMarker.classList.toggle('hidden')
+  newMarkerData.classList.toggle('hidden')
+}
+
 const getCoordinate = (event: MouseEvent) => {
-  const container = event.currentTarget as HTMLElement
-  const containerWidth = container.offsetWidth
-  const containerHeight = container.offsetHeight
+  if (document.getElementById('newMarker')?.classList.contains('hidden')) {
+    return
+  } else {
+    const container = event.currentTarget as HTMLElement
+    const containerWidth = container.offsetWidth
+    const containerHeight = container.offsetHeight
 
-  const clickX = event.offsetX
-  const clickY = event.offsetY
+    const clickX = event.offsetX
+    const clickY = event.offsetY
 
-  const percentLeft = (clickX / containerWidth) * 100
-  const percentTop = (clickY / containerHeight) * 100
-  newMarkerX.value = percentLeft.toFixed(2) + '%'
-  newMarkerY.value = percentTop.toFixed(2) + '%'
+    const percentLeft = (clickX / containerWidth) * 100
+    const percentTop = (clickY / containerHeight) * 100
+    newMarkerX.value = percentLeft.toFixed(2) + '%'
+    newMarkerY.value = percentTop.toFixed(2) + '%'
+  }
 }
 const showLineups = (id: string) => {
   document.getElementById(id)?.classList.toggle('hidden')
