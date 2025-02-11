@@ -20,7 +20,3 @@ defineProps<{
   itemImage: string[]
 }>()
 </script>
-
-<style scoped>
-/* 由于使用了Tailwind CSS，这里可能不需要额外的样式，除非你有特定的样式需求 */
-</style>
