@@ -1,8 +1,11 @@
 <template>
-  <div class="flex">
-    <div class="h-screen min-w-[100vh] bg-gray-50">
+  <div class="flex gap-2 dark:bg-gray-900 transition-colors duration-300">
+    <!-- 左侧地图容器 -->
+    <div
+      class="h-screen min-w-[100vh] bg-gray-50 dark:bg-gray-800 rounded-lg transition-colors duration-300"
+    >
       <div
-        class="border-2 border-gray-700 bg-gray-700 h-full bg-contain bg-no-repeat rounded-lg overflow-hidden relative"
+        class="border-2 border-gray-300 dark:border-gray-600 rounded-lg h-full bg-contain bg-no-repeat overflow-hidden relative transition-colors duration-300"
         :style="{ backgroundImage: `url(${maps[selectedMap]})` }"
         @click="getCoordinate"
       >
@@ -54,7 +57,9 @@
           id="newMarker"
           class="absolute hidden w-2 h-2 translate-[-50%] z-10 bg-red-300 rounded-full group"
         ></div>
-        <div class="absolute right-2 top-2 rounded-lg text-black bg-white">
+        <div
+          class="absolute right-2 top-2 rounded-lg text-black bg-white hidden"
+        >
           <select v-model="selectedMap" @click.stop class="focus:outline-none">
             <option value="ancient">远古遗迹</option>
             <option value="anubis">阿努比斯</option>
@@ -67,39 +72,43 @@
         </div>
       </div>
     </div>
+    <!-- 右侧教程面板-->
     <div
       id="tutorial"
-      class="w-full min-w-200 h-screen p-3 bg-gray-200 rounded-lg overflow-auto myscrollbar"
+      class="w-full h-screen min-w-[100vh] p-4 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-900 transition-colors duration-300 overflow-auto myscrollbar text-black dark:text-white/75"
     >
-      <div class="flex gap-5">
+      <div class="flex gap-5 text-black dark:text-white/75 relative">
         <button
-          type="button"
           @click="showInput"
-          class="bg-blue-200 p-1 rounded-lg hover:bg-blue-300 active:bg-blue-400 hover:scale-110 active:scale-100"
+          class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all font-medium shadow-md hover:shadow-lg active:scale-95"
         >
-          添加新道具
+          ➕ 添加新道具
         </button>
         <div id="markInput" class="space-x-3 hidden">
           <input
             v-model="newMarkerX"
-            class="bg-gray-400 rounded-lg text-center"
-            placeholder="x"
-            type="text"
+            class="px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-md border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            placeholder="X 坐标"
           />
           <input
             v-model="newMarkerY"
-            class="bg-gray-400 rounded-lg text-center"
-            placeholder="y"
-            type="text"
+            class="px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-md border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            placeholder="Y 坐标"
           />
           <input
             v-model="newMarkerDesc"
-            class="bg-gray-400 rounded-lg text-center"
-            placeholder="此处添加描述"
-            type="text"
+            class="px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-md border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            placeholder="道具描述"
           />
         </div>
-        <button type="button" @click="changeDarkMode">亮/暗</button>
+        <!-- 主题切换按钮 -->
+        <button
+          @click="toggleDarkMode"
+          class="absolute top-1 right-4 p-1 hover:scale-105 transition-transform"
+        >
+          <span v-if="!darkMode">🌙</span>
+          <span v-else>☀️</span>
+        </button>
       </div>
       <div id="newMarkerData" class="hidden">
         {{
@@ -113,8 +122,8 @@
         }}
       </div>
       <Tutorial
-        :itemName="TutorialData ? TutorialData.desc : 'Null'"
-        :itemImage="TutorialData ? TutorialData.image : ['Null']"
+        :itemName="TutorialData ? TutorialData.desc : ''"
+        :itemImage="TutorialData ? TutorialData.image : ['']"
       />
     </div>
   </div>
@@ -137,7 +146,7 @@ const newMarkerX = ref<string | null>(null)
 const newMarkerY = ref<string | null>(null)
 const newMarkerDesc = ref<string | null>(null)
 
-const changeDarkMode = () => {
+const toggleDarkMode = () => {
   darkMode.value = !darkMode.value
   document.body.classList.toggle('dark')
 }
