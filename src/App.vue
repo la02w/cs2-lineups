@@ -57,9 +57,7 @@
           id="newMarker"
           class="absolute hidden w-2 h-2 translate-[-50%] z-10 bg-red-300 rounded-full group"
         ></div>
-        <div
-          class="absolute right-2 top-2 rounded-lg text-black bg-white hidden"
-        >
+        <div class="absolute right-2 top-2 rounded-lg text-black bg-white">
           <select v-model="selectedMap" @click.stop class="focus:outline-none">
             <option value="ancient">远古遗迹</option>
             <option value="anubis">阿努比斯</option>
